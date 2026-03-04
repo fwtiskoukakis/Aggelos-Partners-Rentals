@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #050608;
+  --color-surface: #101218;
+  --color-accent: #d9b36c;
+  --color-accent-soft: #e7c892;
+  --color-text-primary: #f5f3ee;
+  --color-text-muted: #b1a79a;
+  --shadow-soft: 0 18px 60px rgba(0, 0, 0, 0.55);
+  --radius-xl: 1.25rem;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  antialiased: auto;
+}
+
+.lux-gradient-bg {
+  background: radial-gradient(circle at top left, #181b24 0, #050608 45%, #050608 100%);
+}
+
+.glass-surface {
+  background: color-mix(in srgb, var(--color-surface) 80%, transparent);
+  backdrop-filter: blur(24px);
+  border: 1px solid color-mix(in srgb, white 5%, transparent);
+  box-shadow: var(--shadow-soft);
+}
