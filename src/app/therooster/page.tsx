@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { vehicles, type Vehicle, type VehicleType } from "@/data/vehicles";
 import { getPartnerBySlug } from "@/data/partners";
 import { LuxButton, SectionShell, Tag } from "@/components/ui";
@@ -81,7 +81,12 @@ export default function TheRoosterPage() {
               </h2>
             </div>
             <div className="flex flex-wrap gap-3">
+              <label htmlFor="transmission-filter" className="sr-only">
+                Transmission
+              </label>
               <select
+                id="transmission-filter"
+                aria-label="Filter by transmission"
                 className="rounded-full border border-stone-200 bg-white px-4 py-2 text-xs text-textMuted shadow-sm outline-none focus:border-accent"
                 value={transmission}
                 onChange={(e) => setTransmission(e.target.value as TransmissionFilter)}
@@ -93,10 +98,16 @@ export default function TheRoosterPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
+          <div
+            className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7"
+            role="tablist"
+            aria-label="Vehicle category"
+          >
             {categoryFilters.map((cat) => (
               <button
                 key={cat.id}
+                role="tab"
+                aria-selected={selectedType === cat.id}
                 onClick={() => setSelectedType(cat.id)}
                 className={`group flex flex-col items-start justify-between rounded-2xl border px-3 py-3 text-left text-xs transition md:px-4 md:py-4 ${
                   selectedType === cat.id
@@ -136,13 +147,13 @@ export default function TheRoosterPage() {
             </div>
           </div>
 
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-2 gap-2 sm:gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {filtered.map((vehicle) => (
               <article
                 key={vehicle.id}
-                className="group flex flex-col overflow-hidden rounded-3xl border border-stone-200 bg-white shadow-soft"
+                className="group flex flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-soft sm:rounded-3xl"
               >
-                <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden bg-stone-100">
+                <div className="relative flex aspect-[4/3] min-h-0 items-center justify-center overflow-hidden bg-stone-100">
                   {vehicle.images[0] ? (
                     <Image
                       src={vehicle.images[0]}
@@ -158,38 +169,36 @@ export default function TheRoosterPage() {
                       </span>
                     </div>
                   )}
-                  <div className="absolute bottom-4 left-4 flex flex-col gap-1">
+                  <div className="absolute bottom-2 left-2 flex flex-col gap-0.5 sm:bottom-4 sm:left-4 sm:gap-1">
                     <Tag>{vehicle.category}</Tag>
-                    <p className="text-sm font-semibold text-textPrimary drop-shadow-sm sm:text-base">
+                    <p className="text-[0.7rem] font-semibold text-textPrimary drop-shadow-sm sm:text-sm md:text-base">
                       {vehicle.name}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex flex-1 flex-col gap-4 p-4 sm:p-5">
-                  <p className="text-xs text-textMuted">{vehicle.descriptionShort}</p>
-                  <div className="flex items-center justify-between text-xs text-textMuted">
-                    <div className="flex gap-4">
+                <div className="flex flex-1 flex-col gap-2 p-2 sm:gap-4 sm:p-5">
+                  <p className="hidden text-xs text-textMuted sm:block">{vehicle.descriptionShort}</p>
+                  <div className="flex items-center justify-between text-[0.65rem] text-textMuted sm:text-xs">
+                    <div className="flex gap-2 sm:gap-4">
                       <span>{vehicle.seats} seats</span>
-                      <span className="hidden sm:inline">
-                        {vehicle.transmission === "automatic" ? "Automatic" : "Manual"}
-                      </span>
+                      <span>{vehicle.transmission === "automatic" ? "Auto" : "Manual"}</span>
                     </div>
                     <div className="text-right">
-                      <p className="text-[0.7rem] uppercase tracking-[0.18em] text-textMuted">
+                      <p className="text-[0.6rem] uppercase tracking-wider text-textMuted sm:text-[0.7rem]">
                         From
                       </p>
-                      <p className="text-sm font-semibold text-accent">
+                      <p className="text-xs font-semibold text-accent sm:text-sm">
                         {vehicle.pricing.lowSeason} €{" "}
-                        <span className="text-[0.7rem] font-normal text-textMuted">/ day</span>
+                        <span className="text-[0.6rem] font-normal text-textMuted sm:text-[0.7rem]">/ day</span>
                       </p>
                     </div>
                   </div>
                   <LuxButton
                     onClick={() => setSelectedVehicle(vehicle)}
-                    className="mt-auto w-full justify-center"
+                    className="mt-auto w-full justify-center py-2 text-[0.7rem] sm:py-3 sm:text-sm"
                   >
-                    View details &amp; request
+                    View &amp; request
                   </LuxButton>
                 </div>
               </article>
@@ -269,19 +278,9 @@ function HeroSection({ onBrowse }: { onBrowse: () => void }) {
                 </div>
               )}
             </div>
-            {partner.logo && (
-              <div className="pointer-events-none absolute -bottom-6 right-5 flex items-center gap-3 rounded-2xl border border-stone-200 bg-white/95 px-4 py-3 text-[0.65rem] text-textMuted shadow-soft backdrop-blur-xl sm:text-xs">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border border-stone-200 bg-stone-50 p-1.5">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={partner.logo}
-                    alt=""
-                    className="h-full w-full object-contain object-center"
-                  />
-                </div>
-                <span>In partnership with Aggelos Rentals</span>
-              </div>
-            )}
+            <div className="absolute -bottom-6 right-5 rounded-2xl border border-stone-200 bg-white/95 px-4 py-3 text-[0.65rem] text-textMuted shadow-soft backdrop-blur-xl sm:text-xs">
+              <span>In partnership with Aggelos Rentals</span>
+            </div>
           </div>
         </div>
       </SectionShell>
@@ -300,6 +299,7 @@ function VehicleDetailSheet({
   partnerName: string;
   whatsappNumber?: string;
 }) {
+  const dialogRef = useRef<HTMLDivElement>(null);
   const [pickupDate, setPickupDate] = useState(() => formatDate(0));
   const [returnDate, setReturnDate] = useState(() => formatDate(1));
   const [pickupTime, setPickupTime] = useState("10:00");
@@ -310,9 +310,44 @@ function VehicleDetailSheet({
   const [referenceCode] = useState(() => generateReferenceCode());
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
+  useEffect(() => {
+    const el = dialogRef.current;
+    if (!el) return;
+    const focusables = el.querySelectorAll<HTMLElement>(
+      'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    );
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    first?.focus();
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+        return;
+      }
+      if (e.key !== "Tab") return;
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last?.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault();
+          first?.focus();
+        }
+      }
+    };
+    el.addEventListener("keydown", onKeyDown);
+    return () => el.removeEventListener("keydown", onKeyDown);
+  }, [onClose]);
+
   const toggleExtra = (id: string) => {
     setExtras((prev) => (prev.includes(id) ? prev.filter((e) => e !== id) : [...prev, id]));
   };
+
+  const copyReference = useCallback(() => {
+    navigator.clipboard.writeText(referenceCode);
+  }, [referenceCode]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -349,16 +384,157 @@ function VehicleDetailSheet({
   const disabled =
     !pickupDate || !returnDate || !guestName || !roomNumber || status === "sending";
 
+  const oneLiner = `${vehicle.category} · ${vehicle.seats} seats · ${vehicle.transmission === "automatic" ? "Auto" : "Manual"} · from ${vehicle.pricing.lowSeason} €/day`;
+
   return (
     <div className="fixed inset-0 z-40 flex items-end justify-center bg-black/40 backdrop-blur-sm md:items-center">
-      <div className="glass-surface relative flex h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-t-3xl border border-stone-200 bg-white md:h-[80vh] md:rounded-3xl">
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="vehicle-detail-title"
+        className="glass-surface relative flex h-[100dvh] max-h-[100dvh] w-full max-w-4xl flex-col overflow-hidden rounded-t-3xl border border-stone-200 bg-white md:h-[85vh] md:max-h-[90vh] md:rounded-3xl"
+      >
+        <h2 id="vehicle-detail-title" className="sr-only">
+          {vehicle.name} – request form
+        </h2>
         <button
+          type="button"
           onClick={onClose}
-          className="absolute right-5 top-5 rounded-full border border-stone-200 bg-stone-100 px-3 py-1 text-xs text-textMuted hover:bg-stone-200"
+          aria-label="Close"
+          className="absolute right-3 top-3 z-10 rounded-full border border-stone-200 bg-stone-100 px-3 py-1.5 text-xs text-textMuted hover:bg-stone-200 sm:right-5 sm:top-5"
         >
           Close
         </button>
-        <div className="grid flex-1 gap-6 overflow-hidden p-5 md:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] md:p-7">
+
+        {/* Mobile: compact one-screen layout */}
+        <div className="flex flex-1 flex-col overflow-y-auto p-3 md:hidden">
+          <div className="mb-3 border-b border-stone-200 pb-3 pr-16">
+            <p className="text-lg font-semibold text-textPrimary">{vehicle.name}</p>
+            <p className="text-[0.7rem] text-textMuted">{oneLiner}</p>
+          </div>
+          <div className="flex flex-1 flex-col gap-2 text-[0.7rem] text-textMuted">
+            <p className="font-semibold uppercase tracking-wider text-textMuted">
+              Create request
+            </p>
+            <form onSubmit={handleSubmit} className="flex flex-col gap-2" id="request-form-mobile">
+              <div className="grid grid-cols-2 gap-2">
+                <Field label="Pick-up date">
+                  <input
+                    type="date"
+                    value={pickupDate}
+                    onChange={(e) => setPickupDate(e.target.value)}
+                    min={formatDate(0)}
+                    required
+                    className="w-full rounded-lg border border-stone-200 bg-white px-2 py-1.5 text-[0.7rem] text-textPrimary outline-none focus:border-accent"
+                  />
+                </Field>
+                <Field label="Return date">
+                  <input
+                    type="date"
+                    value={returnDate}
+                    onChange={(e) => setReturnDate(e.target.value)}
+                    min={pickupDate || formatDate(0)}
+                    required
+                    className="w-full rounded-lg border border-stone-200 bg-white px-2 py-1.5 text-[0.7rem] text-textPrimary outline-none focus:border-accent"
+                  />
+                </Field>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <Field label="Pick-up time">
+                  <input
+                    type="time"
+                    value={pickupTime}
+                    onChange={(e) => setPickupTime(e.target.value)}
+                    className="w-full rounded-lg border border-stone-200 bg-white px-2 py-1.5 text-[0.7rem] text-textPrimary outline-none focus:border-accent"
+                  />
+                </Field>
+                <Field label="Return time">
+                  <input
+                    type="time"
+                    value={returnTime}
+                    onChange={(e) => setReturnTime(e.target.value)}
+                    className="w-full rounded-lg border border-stone-200 bg-white px-2 py-1.5 text-[0.7rem] text-textPrimary outline-none focus:border-accent"
+                  />
+                </Field>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <Field label="Guest name">
+                  <input
+                    type="text"
+                    value={guestName}
+                    onChange={(e) => setGuestName(e.target.value)}
+                    required
+                    className="w-full rounded-lg border border-stone-200 bg-white px-2 py-1.5 text-[0.7rem] text-textPrimary outline-none focus:border-accent"
+                  />
+                </Field>
+                <Field label="Room number">
+                  <input
+                    type="text"
+                    value={roomNumber}
+                    onChange={(e) => setRoomNumber(e.target.value)}
+                    required
+                    className="w-full rounded-lg border border-stone-200 bg-white px-2 py-1.5 text-[0.7rem] text-textPrimary outline-none focus:border-accent"
+                  />
+                </Field>
+              </div>
+              <Field label="Extras">
+                <div className="flex flex-wrap gap-1.5" role="group" aria-label="Extras">
+                  {[
+                    { id: "child-seat", label: "Child seat" },
+                    { id: "extra-driver", label: "Extra driver" },
+                    { id: "full-insurance", label: "Insurance" },
+                  ].map((extra) => {
+                    const active = extras.includes(extra.id);
+                    return (
+                      <button
+                        key={extra.id}
+                        type="button"
+                        onClick={() => toggleExtra(extra.id)}
+                        className={`rounded-full border px-2 py-0.5 text-[0.65rem] transition ${
+                          active
+                            ? "border-accent bg-amber-50 text-textPrimary"
+                            : "border-stone-200 bg-stone-100 text-textMuted hover:border-stone-300"
+                        }`}
+                      >
+                        {extra.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </Field>
+              <LuxButton
+                type="submit"
+                disabled={disabled}
+                className="mt-1 w-full justify-center py-2 text-[0.7rem]"
+              >
+                {status === "sending"
+                  ? "Sending…"
+                  : status === "sent"
+                  ? "Request sent – show to reception"
+                  : "Send request"}
+              </LuxButton>
+              <p className="text-[0.6rem] text-textMuted/80">
+                Reference: <span className="font-mono text-textPrimary">{referenceCode}</span>{" "}
+                <button
+                  type="button"
+                  onClick={copyReference}
+                  className="text-accent underline"
+                >
+                  Copy
+                </button>
+              </p>
+              {status === "error" && (
+                <p className="text-[0.65rem] text-red-600" role="alert">
+                  Something went wrong. Show these details to reception to contact Aggelos Rentals.
+                </p>
+              )}
+            </form>
+          </div>
+        </div>
+
+        {/* Desktop: two-column layout */}
+        <div className="hidden flex-1 grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] gap-6 overflow-hidden p-5 md:grid md:p-7">
           <div className="flex flex-col gap-4 overflow-y-auto pr-1">
             <Tag>{vehicle.category}</Tag>
             <h2 className="text-2xl font-semibold tracking-tight text-textPrimary sm:text-3xl">
@@ -418,7 +594,7 @@ function VehicleDetailSheet({
               Share a few details and we will open WhatsApp with a pre-filled message to Aggelos
               Rentals. Reception will then coordinate the booking on your behalf.
             </p>
-            <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-3" id="request-form-desktop">
               <div className="grid grid-cols-2 gap-3">
                 <Field label="Pick-up date">
                   <input
@@ -426,6 +602,7 @@ function VehicleDetailSheet({
                     value={pickupDate}
                     onChange={(e) => setPickupDate(e.target.value)}
                     min={formatDate(0)}
+                    required
                     className="w-full rounded-xl border border-stone-200 bg-white px-3 py-2 text-xs text-textPrimary shadow-sm outline-none focus:border-accent"
                   />
                 </Field>
@@ -435,6 +612,7 @@ function VehicleDetailSheet({
                     value={returnDate}
                     onChange={(e) => setReturnDate(e.target.value)}
                     min={pickupDate || formatDate(0)}
+                    required
                     className="w-full rounded-xl border border-stone-200 bg-white px-3 py-2 text-xs text-textPrimary shadow-sm outline-none focus:border-accent"
                   />
                 </Field>
@@ -463,6 +641,7 @@ function VehicleDetailSheet({
                     type="text"
                     value={guestName}
                     onChange={(e) => setGuestName(e.target.value)}
+                    required
                     className="w-full rounded-xl border border-stone-200 bg-white px-3 py-2 text-xs text-textPrimary shadow-sm outline-none focus:border-accent"
                   />
                 </Field>
@@ -471,13 +650,14 @@ function VehicleDetailSheet({
                     type="text"
                     value={roomNumber}
                     onChange={(e) => setRoomNumber(e.target.value)}
+                    required
                     className="w-full rounded-xl border border-stone-200 bg-white px-3 py-2 text-xs text-textPrimary shadow-sm outline-none focus:border-accent"
                   />
                 </Field>
               </div>
 
               <Field label="Extras">
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2" role="group" aria-label="Extras">
                   {[
                     { id: "child-seat", label: "Child seat" },
                     { id: "extra-driver", label: "Additional driver" },
@@ -520,13 +700,19 @@ function VehicleDetailSheet({
                   pricing and any additional arrangements with you.
                 </p>
                 <p className="text-[0.68rem] text-textMuted/60">
-                  Reference code for this request:&nbsp;
-                  <span className="font-mono text-textPrimary">{referenceCode}</span>
+                  Reference code: <span className="font-mono text-textPrimary">{referenceCode}</span>{" "}
+                  <button
+                    type="button"
+                    onClick={copyReference}
+                    className="text-accent underline hover:no-underline"
+                  >
+                    Copy
+                  </button>
                 </p>
                 {status === "error" && (
-                  <p className="text-[0.68rem] text-red-300">
-                    Something went wrong sending the request. Please show these details to
-                    reception and they will contact Aggelos Rentals directly.
+                  <p className="text-[0.68rem] text-red-600" role="alert">
+                    Something went wrong. Please show these details to reception and they will
+                    contact Aggelos Rentals directly.
                   </p>
                 )}
               </div>

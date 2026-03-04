@@ -23,7 +23,6 @@ export const partners: PartnerConfig[] = [
     id: "therooster",
     slug: "therooster",
     name: "The Rooster Antiparos",
-    logo: "/images/partners/therooster-logo.svg",
     heroImage: "/images/partners/therooster-hero.jpg",
     headline: "Your private fleet at The Rooster.",
     subheadline: "A curated selection of vehicles and experiences for guests of The Rooster Antiparos.",
