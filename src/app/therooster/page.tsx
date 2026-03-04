@@ -70,7 +70,7 @@ export default function TheRoosterPage() {
       />
 
       <SectionShell>
-        <div className="flex flex-col gap-6 rounded-3xl border border-white/5 bg-surface/80 p-5 shadow-soft backdrop-blur-xl sm:p-7">
+        <div className="flex flex-col gap-6 rounded-3xl border border-stone-200 bg-white/90 p-5 shadow-soft backdrop-blur-xl sm:p-7">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-textMuted">
@@ -82,7 +82,7 @@ export default function TheRoosterPage() {
             </div>
             <div className="flex flex-wrap gap-3">
               <select
-                className="glass-surface rounded-full px-4 py-2 text-xs text-textMuted outline-none"
+                className="rounded-full border border-stone-200 bg-white px-4 py-2 text-xs text-textMuted shadow-sm outline-none focus:border-accent"
                 value={transmission}
                 onChange={(e) => setTransmission(e.target.value as TransmissionFilter)}
               >
@@ -100,8 +100,8 @@ export default function TheRoosterPage() {
                 onClick={() => setSelectedType(cat.id)}
                 className={`group flex flex-col items-start justify-between rounded-2xl border px-3 py-3 text-left text-xs transition md:px-4 md:py-4 ${
                   selectedType === cat.id
-                    ? "border-accent bg-accent/10 text-textPrimary"
-                    : "border-white/8 bg-white/0 text-textMuted hover:border-white/20 hover:bg-white/5"
+                    ? "border-accent bg-amber-50 text-textPrimary"
+                    : "border-stone-200 bg-white text-textMuted hover:border-stone-300 hover:bg-stone-50"
                 }`}
               >
                 <span className="font-semibold tracking-wide">{cat.label}</span>
@@ -140,20 +140,19 @@ export default function TheRoosterPage() {
             {filtered.map((vehicle) => (
               <article
                 key={vehicle.id}
-                className="group flex flex-col overflow-hidden rounded-3xl border border-white/8 bg-surface/80 shadow-soft backdrop-blur-xl"
+                className="group flex flex-col overflow-hidden rounded-3xl border border-stone-200 bg-white shadow-soft"
               >
-                <div className="relative aspect-[4/3] overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-transparent to-black/70" />
+                <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden bg-stone-100">
                   {vehicle.images[0] ? (
                     <Image
                       src={vehicle.images[0]}
                       alt={vehicle.name}
                       fill
-                      className="object-cover"
+                      className="object-contain p-2"
                       sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-white/10 to-black/60">
+                    <div className="flex h-full w-full items-center justify-center bg-stone-100">
                       <span className="text-xs font-semibold tracking-[0.22em] text-textMuted">
                         IMAGE PLACEHOLDER
                       </span>
@@ -161,7 +160,7 @@ export default function TheRoosterPage() {
                   )}
                   <div className="absolute bottom-4 left-4 flex flex-col gap-1">
                     <Tag>{vehicle.category}</Tag>
-                    <p className="text-sm font-semibold text-textPrimary sm:text-base">
+                    <p className="text-sm font-semibold text-textPrimary drop-shadow-sm sm:text-base">
                       {vehicle.name}
                     </p>
                   </div>
@@ -215,8 +214,8 @@ function HeroSection({ onBrowse }: { onBrowse: () => void }) {
   if (!partner) return null;
 
   return (
-    <div className="relative overflow-hidden border-b border-white/5">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.18),_transparent_55%),radial-gradient(circle_at_bottom,_rgba(15,15,20,1),_#050608_70%)]" />
+    <div className="relative overflow-hidden border-b border-stone-200">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,_rgba(255,251,245,0.6),_transparent_70%)]" />
       <SectionShell>
         <div className="relative z-10 grid gap-10 md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] md:items-center">
           <div className="space-y-6">
@@ -258,7 +257,7 @@ function HeroSection({ onBrowse }: { onBrowse: () => void }) {
                   sizes="(min-width: 1024px) 420px, 100vw"
                 />
               ) : (
-                <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-white/8 to-black/80">
+                <div className="flex h-full w-full items-center justify-center bg-stone-100">
                   <div className="text-center">
                     <p className="text-xs font-semibold uppercase tracking-[0.24em] text-textMuted">
                       FLEET PREVIEW
@@ -271,8 +270,8 @@ function HeroSection({ onBrowse }: { onBrowse: () => void }) {
               )}
             </div>
             {partner.logo && (
-              <div className="pointer-events-none absolute -bottom-6 right-5 flex items-center gap-3 rounded-2xl border border-white/10 bg-background/80 px-4 py-3 text-[0.65rem] text-textMuted shadow-soft backdrop-blur-xl sm:text-xs">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/20 bg-black/40 p-1.5">
+              <div className="pointer-events-none absolute -bottom-6 right-5 flex items-center gap-3 rounded-2xl border border-stone-200 bg-white/95 px-4 py-3 text-[0.65rem] text-textMuted shadow-soft backdrop-blur-xl sm:text-xs">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border border-stone-200 bg-stone-50 p-1.5">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={partner.logo}
@@ -351,11 +350,11 @@ function VehicleDetailSheet({
     !pickupDate || !returnDate || !guestName || !roomNumber || status === "sending";
 
   return (
-    <div className="fixed inset-0 z-40 flex items-end justify-center bg-black/60 backdrop-blur-sm md:items-center">
-      <div className="glass-surface relative flex h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-t-3xl border border-white/15 bg-surface/95 md:h-[80vh] md:rounded-3xl">
+    <div className="fixed inset-0 z-40 flex items-end justify-center bg-black/40 backdrop-blur-sm md:items-center">
+      <div className="glass-surface relative flex h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-t-3xl border border-stone-200 bg-white md:h-[80vh] md:rounded-3xl">
         <button
           onClick={onClose}
-          className="absolute right-5 top-5 rounded-full border border-white/15 bg-black/40 px-3 py-1 text-xs text-textMuted hover:bg-black/70"
+          className="absolute right-5 top-5 rounded-full border border-stone-200 bg-stone-100 px-3 py-1 text-xs text-textMuted hover:bg-stone-200"
         >
           Close
         </button>
@@ -386,7 +385,7 @@ function VehicleDetailSheet({
               />
             </div>
 
-            <div className="mt-4 rounded-2xl border border-white/10 bg-black/40 p-4 text-xs text-textMuted sm:text-sm">
+            <div className="mt-4 rounded-2xl border border-stone-200 bg-stone-50 p-4 text-xs text-textMuted sm:text-sm">
               <p className="text-[0.7rem] uppercase tracking-[0.2em] text-textMuted">
                 Partner rates for {partnerName}
               </p>
@@ -411,7 +410,7 @@ function VehicleDetailSheet({
             </div>
           </div>
 
-          <div className="flex flex-col gap-4 overflow-y-auto border-t border-white/10 pt-4 text-xs text-textMuted md:border-l md:border-t-0 md:pl-5">
+          <div className="flex flex-col gap-4 overflow-y-auto border-t border-stone-200 pt-4 text-xs text-textMuted md:border-l md:border-t-0 md:pl-5">
             <p className="text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-textMuted">
               Create a request
             </p>
@@ -427,7 +426,7 @@ function VehicleDetailSheet({
                     value={pickupDate}
                     onChange={(e) => setPickupDate(e.target.value)}
                     min={formatDate(0)}
-                    className="w-full rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-xs text-textPrimary outline-none focus:border-accent"
+                    className="w-full rounded-xl border border-stone-200 bg-white px-3 py-2 text-xs text-textPrimary shadow-sm outline-none focus:border-accent"
                   />
                 </Field>
                 <Field label="Return date">
@@ -436,7 +435,7 @@ function VehicleDetailSheet({
                     value={returnDate}
                     onChange={(e) => setReturnDate(e.target.value)}
                     min={pickupDate || formatDate(0)}
-                    className="w-full rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-xs text-textPrimary outline-none focus:border-accent"
+                    className="w-full rounded-xl border border-stone-200 bg-white px-3 py-2 text-xs text-textPrimary shadow-sm outline-none focus:border-accent"
                   />
                 </Field>
               </div>
@@ -446,7 +445,7 @@ function VehicleDetailSheet({
                     type="time"
                     value={pickupTime}
                     onChange={(e) => setPickupTime(e.target.value)}
-                    className="w-full rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-xs text-textPrimary outline-none focus:border-accent"
+                    className="w-full rounded-xl border border-stone-200 bg-white px-3 py-2 text-xs text-textPrimary shadow-sm outline-none focus:border-accent"
                   />
                 </Field>
                 <Field label="Return time">
@@ -454,7 +453,7 @@ function VehicleDetailSheet({
                     type="time"
                     value={returnTime}
                     onChange={(e) => setReturnTime(e.target.value)}
-                    className="w-full rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-xs text-textPrimary outline-none focus:border-accent"
+                    className="w-full rounded-xl border border-stone-200 bg-white px-3 py-2 text-xs text-textPrimary shadow-sm outline-none focus:border-accent"
                   />
                 </Field>
               </div>
@@ -464,7 +463,7 @@ function VehicleDetailSheet({
                     type="text"
                     value={guestName}
                     onChange={(e) => setGuestName(e.target.value)}
-                    className="w-full rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-xs text-textPrimary outline-none focus:border-accent"
+                    className="w-full rounded-xl border border-stone-200 bg-white px-3 py-2 text-xs text-textPrimary shadow-sm outline-none focus:border-accent"
                   />
                 </Field>
                 <Field label="Room number">
@@ -472,7 +471,7 @@ function VehicleDetailSheet({
                     type="text"
                     value={roomNumber}
                     onChange={(e) => setRoomNumber(e.target.value)}
-                    className="w-full rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-xs text-textPrimary outline-none focus:border-accent"
+                    className="w-full rounded-xl border border-stone-200 bg-white px-3 py-2 text-xs text-textPrimary shadow-sm outline-none focus:border-accent"
                   />
                 </Field>
               </div>
@@ -492,8 +491,8 @@ function VehicleDetailSheet({
                         onClick={() => toggleExtra(extra.id)}
                         className={`rounded-full border px-3 py-1 text-[0.7rem] transition ${
                           active
-                            ? "border-accent bg-accent/15 text-textPrimary"
-                            : "border-white/10 bg-black/30 text-textMuted hover:border-white/25"
+                            ? "border-accent bg-amber-50 text-textPrimary"
+                            : "border-stone-200 bg-stone-100 text-textMuted hover:border-stone-300"
                         }`}
                       >
                         {extra.label}
@@ -541,7 +540,7 @@ function VehicleDetailSheet({
 
 function Spec({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-black/40 p-3">
+    <div className="rounded-xl border border-stone-200 bg-stone-50 p-3">
       <p className="text-[0.65rem] uppercase tracking-[0.2em] text-textMuted">{label}</p>
       <p className="mt-1 text-xs text-textPrimary">{value}</p>
     </div>

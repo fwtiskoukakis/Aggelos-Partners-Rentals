@@ -10,7 +10,7 @@ export default function PrintPage() {
   return (
     <main className="min-h-screen bg-background text-textPrimary">
       <SectionShell>
-        <div className="mx-auto flex w-full max-w-3xl flex-col gap-8 bg-surface/80 p-8 shadow-soft print:shadow-none">
+        <div className="mx-auto flex w-full max-w-3xl flex-col gap-8 bg-white p-8 shadow-soft print:shadow-none">
           <header className="flex flex-col gap-3 text-center">
             <Tag>For reception &amp; guest rooms</Tag>
             <h1 className="text-2xl font-semibold tracking-tight">
@@ -41,7 +41,7 @@ export default function PrintPage() {
             </div>
           </section>
 
-          <footer className="mt-4 border-t border-white/10 pt-4 text-[0.7rem] text-textMuted">
+          <footer className="mt-4 border-t border-stone-200 pt-4 text-[0.7rem] text-textMuted">
             <p>
               Tip for reception: open this page and use your browser&apos;s print function to create
               A4 sheets for the front desk or guest rooms.

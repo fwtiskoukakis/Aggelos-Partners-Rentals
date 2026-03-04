@@ -20,8 +20,8 @@ export function LuxButton({
     "inline-flex items-center justify-center rounded-full px-7 py-3 text-sm font-medium tracking-wide transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed";
   const styles =
     variant === "primary"
-      ? "bg-accent text-background shadow-soft hover:bg-accentSoft"
-      : "bg-white/5 text-textPrimary hover:bg-white/10";
+      ? "bg-accent text-white shadow-soft hover:bg-accentSoft"
+      : "bg-stone-100 text-textPrimary hover:bg-stone-200 border border-stone-200";
 
   return (
     <button className={`${base} ${styles}`} {...props}>
@@ -32,7 +32,7 @@ export function LuxButton({
 
 export function Tag({ children }: { children: ReactNode }) {
   return (
-    <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs uppercase tracking-[0.18em] text-textMuted">
+    <span className="rounded-full border border-stone-200 bg-stone-100 px-3 py-1 text-xs uppercase tracking-[0.18em] text-textMuted">
       {children}
     </span>
   );
