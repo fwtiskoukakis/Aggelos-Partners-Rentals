@@ -407,17 +407,45 @@ function VehicleDetailSheet({
           Close
         </button>
 
-        {/* Mobile: compact one-screen layout */}
+        {/* Mobile: compact one-screen layout with details + form */}
         <div className="flex flex-1 flex-col overflow-y-auto p-3 md:hidden">
-          <div className="mb-3 border-b border-stone-200 pb-3 pr-16">
-            <p className="text-lg font-semibold text-textPrimary">{vehicle.name}</p>
-            <p className="text-[0.7rem] text-textMuted">{oneLiner}</p>
+          <div className="mb-2 pr-16">
+            <Tag>{vehicle.category}</Tag>
+            <p className="mt-1 text-base font-semibold text-textPrimary">{vehicle.name}</p>
+            <p className="mt-0.5 line-clamp-2 text-[0.65rem] leading-tight text-textMuted">
+              {vehicle.descriptionLong}
+            </p>
+            <div className="mt-2 grid grid-cols-2 gap-1.5 text-[0.6rem]">
+              <span className="text-textMuted">Seats:</span>
+              <span className="text-textPrimary">{vehicle.seats}</span>
+              <span className="text-textMuted">Transmission:</span>
+              <span className="text-textPrimary">
+                {vehicle.transmission === "automatic" ? "Automatic" : "Manual"}
+              </span>
+              <span className="text-textMuted">Luggage:</span>
+              <span className="text-textPrimary">
+                {vehicle.luggage === "large"
+                  ? "Generous"
+                  : vehicle.luggage === "medium"
+                  ? "Medium"
+                  : "Light"}
+              </span>
+              <span className="text-textMuted">Best for:</span>
+              <span className="text-textPrimary">{vehicle.tags.slice(0, 2).join(", ")}</span>
+            </div>
+            <div className="mt-2 rounded-lg border border-stone-200 bg-stone-50 px-2 py-1.5 text-[0.6rem] text-textMuted">
+              <span className="text-textMuted/90">Rates: </span>
+              <span className="font-semibold text-accent">{vehicle.pricing.lowSeason} €</span>
+              <span> low / </span>
+              <span className="font-semibold text-accent">{vehicle.pricing.highSeason} €</span>
+              <span> high per day</span>
+            </div>
           </div>
-          <div className="flex flex-1 flex-col gap-2 text-[0.7rem] text-textMuted">
+          <div className="flex flex-1 flex-col gap-1.5 border-t border-stone-200 pt-2 text-[0.7rem] text-textMuted">
             <p className="font-semibold uppercase tracking-wider text-textMuted">
               Create request
             </p>
-            <form onSubmit={handleSubmit} className="flex flex-col gap-2" id="request-form-mobile">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-1.5" id="request-form-mobile">
               <div className="grid grid-cols-2 gap-2">
                 <Field label="Pick-up date">
                   <input
