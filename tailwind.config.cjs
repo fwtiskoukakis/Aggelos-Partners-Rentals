@@ -15,7 +15,9 @@ module.exports = {
         textMuted: "#57534e"
       },
       boxShadow: {
-        soft: "0 18px 60px rgba(0,0,0,0.08)"
+        soft: "0 18px 60px rgba(0,0,0,0.08)",
+        "soft-hover": "0 24px 48px rgba(0,0,0,0.12)",
+        "accent-glow": "0 0 24px rgba(184,134,11,0.25)"
       },
       borderRadius: {
         xl: "1.25rem"

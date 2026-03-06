@@ -20,8 +20,8 @@ export function LuxButton({
     "inline-flex items-center justify-center rounded-full px-7 py-3 text-sm font-medium tracking-wide transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed";
   const styles =
     variant === "primary"
-      ? "bg-accent text-white shadow-soft hover:bg-accentSoft"
-      : "bg-stone-100 text-textPrimary hover:bg-stone-200 border border-stone-200";
+      ? "bg-accent text-white shadow-soft transition-all duration-200 hover:scale-[1.02] hover:bg-accentSoft hover:shadow-[0_0_24px_rgba(184,134,11,0.25)]"
+      : "bg-stone-100 text-textPrimary transition-all duration-200 hover:scale-[1.02] hover:bg-stone-200 border border-stone-200";
 
   return (
     <button className={`${base} ${styles}`} {...props}>

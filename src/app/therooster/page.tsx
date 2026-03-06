@@ -109,7 +109,7 @@ export default function TheRoosterPage() {
                 role="tab"
                 aria-selected={selectedType === cat.id}
                 onClick={() => setSelectedType(cat.id)}
-                className={`group flex flex-col items-start justify-between rounded-2xl border px-3 py-3 text-left text-xs transition md:px-4 md:py-4 ${
+                className={`group flex flex-col items-start justify-between rounded-2xl border px-3 py-3 text-left text-xs transition-all duration-200 md:px-4 md:py-4 ${
                   selectedType === cat.id
                     ? "border-accent bg-amber-50 text-textPrimary"
                     : "border-stone-200 bg-white text-textMuted hover:border-stone-300 hover:bg-stone-50"
@@ -148,10 +148,11 @@ export default function TheRoosterPage() {
           </div>
 
           <div className="grid grid-cols-2 gap-2 sm:gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((vehicle) => (
+            {filtered.map((vehicle, index) => (
               <article
                 key={vehicle.id}
-                className="group flex flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-soft sm:rounded-3xl"
+                className="group animate-fade-in-up flex flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white opacity-0 shadow-soft transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_24px_48px_rgba(0,0,0,0.12)] sm:rounded-3xl"
+                style={{ animationDelay: `${Math.min(index * 50, 400)}ms`, animationFillMode: "forwards" }}
               >
                 <div className="relative flex aspect-[4/3] min-h-0 items-center justify-center overflow-hidden bg-stone-100">
                   {vehicle.images[0] ? (
@@ -159,7 +160,7 @@ export default function TheRoosterPage() {
                       src={vehicle.images[0]}
                       alt={vehicle.name}
                       fill
-                      className="object-contain p-2"
+                      className="object-contain p-2 transition-transform duration-300 ease-out group-hover:scale-105"
                       sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                     />
                   ) : (
@@ -228,21 +229,45 @@ function HeroSection({ onBrowse }: { onBrowse: () => void }) {
       <SectionShell>
         <div className="relative z-10 grid gap-10 md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] md:items-center">
           <div className="space-y-6">
-            <Tag>Exclusively for guests of {partner.name}</Tag>
-            <h1 className="text-3xl font-semibold tracking-tight text-textPrimary sm:text-4xl md:text-5xl">
+            <span
+              className="animate-fade-in-up opacity-0"
+              style={{ animationDelay: "0ms", animationFillMode: "forwards" }}
+            >
+              <Tag>Exclusively for guests of {partner.name}</Tag>
+            </span>
+            <h1
+              className="animate-fade-in-up text-3xl font-semibold tracking-tight text-textPrimary opacity-0 sm:text-4xl md:text-5xl"
+              style={{ animationDelay: "80ms", animationFillMode: "forwards" }}
+            >
               {partner.headline}
             </h1>
-            <p className="max-w-xl text-sm text-textMuted sm:text-base">
+            <p
+              className="animate-fade-in-up max-w-xl text-sm text-textMuted opacity-0 sm:text-base"
+              style={{ animationDelay: "160ms", animationFillMode: "forwards" }}
+            >
               {partner.subheadline}
             </p>
-            <p className="max-w-xl text-xs text-textMuted/90 sm:text-sm">
+            <p
+              className="animate-fade-in-up max-w-xl text-xs text-textMuted/90 opacity-0 sm:text-sm"
+              style={{ animationDelay: "240ms", animationFillMode: "forwards" }}
+            >
               {partner.primaryMessage}
             </p>
-            <div className="flex flex-wrap gap-3 pt-2">
-              <LuxButton onClick={onBrowse}>Browse vehicles</LuxButton>
-              <LuxButton variant="ghost">Ask reception to assist</LuxButton>
+            <div
+              className="flex flex-wrap gap-3 pt-2"
+              style={{ animationDelay: "320ms", animationFillMode: "forwards" }}
+            >
+              <LuxButton onClick={onBrowse} className="animate-fade-in-up opacity-0">
+                Browse vehicles
+              </LuxButton>
+              <LuxButton variant="ghost" className="animate-fade-in-up opacity-0">
+                Ask reception to assist
+              </LuxButton>
             </div>
-            <div className="mt-4 flex flex-wrap gap-4 text-[0.7rem] text-textMuted/80 sm:text-xs">
+            <div
+              className="animate-fade-in-up mt-4 flex flex-wrap gap-4 text-[0.7rem] text-textMuted/80 opacity-0 sm:text-xs"
+              style={{ animationDelay: "400ms", animationFillMode: "forwards" }}
+            >
               <div className="flex items-center gap-2">
                 <span className="h-[1px] w-6 bg-accent/70" />
                 <span>{partner.season.lowSeasonLabel}</span>
@@ -254,7 +279,7 @@ function HeroSection({ onBrowse }: { onBrowse: () => void }) {
             </div>
           </div>
 
-          <div className="relative">
+          <div className="relative animate-fade-in-up opacity-0" style={{ animationDelay: "200ms", animationFillMode: "forwards" }}>
             <div className="glass-surface relative aspect-[4/3] overflow-hidden rounded-[1.75rem]">
               {partner.heroImage ? (
                 <Image
@@ -309,6 +334,7 @@ function VehicleDetailSheet({
   const [extras, setExtras] = useState<string[]>([]);
   const [referenceCode] = useState(() => generateReferenceCode());
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const el = dialogRef.current;
@@ -347,6 +373,8 @@ function VehicleDetailSheet({
 
   const copyReference = useCallback(() => {
     navigator.clipboard.writeText(referenceCode);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   }, [referenceCode]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -387,13 +415,13 @@ function VehicleDetailSheet({
   const oneLiner = `${vehicle.category} · ${vehicle.seats} seats · ${vehicle.transmission === "automatic" ? "Auto" : "Manual"} · from ${vehicle.pricing.lowSeason} €/day`;
 
   return (
-    <div className="fixed inset-0 z-40 flex items-end justify-center bg-black/40 backdrop-blur-sm md:items-center">
+    <div className="fixed inset-0 z-40 flex items-end justify-center bg-black/40 backdrop-blur-sm animate-fade-in md:items-center">
       <div
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="vehicle-detail-title"
-        className="glass-surface relative flex h-[100dvh] max-h-[100dvh] w-full max-w-4xl flex-col overflow-hidden rounded-t-3xl border border-stone-200 bg-white md:h-[85vh] md:max-h-[90vh] md:rounded-3xl"
+        className="glass-surface relative flex h-[100dvh] max-h-[100dvh] w-full max-w-4xl flex-col overflow-hidden rounded-t-3xl border border-stone-200 bg-white animate-slide-up md:h-[85vh] md:max-h-[90vh] md:rounded-3xl md:animate-modal-scale"
       >
         <h2 id="vehicle-detail-title" className="sr-only">
           {vehicle.name} – request form
@@ -547,9 +575,9 @@ function VehicleDetailSheet({
                 <button
                   type="button"
                   onClick={copyReference}
-                  className="text-accent underline"
+                  className="text-accent underline transition-opacity hover:opacity-80"
                 >
-                  Copy
+                  {copied ? "Copied!" : "Copy"}
                 </button>
               </p>
               {status === "error" && (
@@ -732,9 +760,9 @@ function VehicleDetailSheet({
                   <button
                     type="button"
                     onClick={copyReference}
-                    className="text-accent underline hover:no-underline"
+                    className="text-accent underline transition-opacity hover:opacity-80"
                   >
-                    Copy
+                    {copied ? "Copied!" : "Copy"}
                   </button>
                 </p>
                 {status === "error" && (
