@@ -67,6 +67,13 @@ export default function TheRoosterPage() {
           const el = document.getElementById("fleet-grid");
           el?.scrollIntoView({ behavior: "smooth" });
         }}
+        onAskReception={() => {
+          const msg = partner.receptionAssistMessage ?? "Hi, I'm a guest at The Rooster and would like help choosing a rental.";
+          const phone = partner.contact.whatsappNumber?.replace(/[^\d]/g, "");
+          if (phone) {
+            window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, "_blank");
+          }
+        }}
       />
 
       <SectionShell>
@@ -180,6 +187,11 @@ export default function TheRoosterPage() {
 
                 <div className="flex flex-1 flex-col gap-2 p-2 sm:gap-4 sm:p-5">
                   <p className="hidden text-xs text-textMuted sm:block">{vehicle.descriptionShort}</p>
+                  {vehicle.tags.length > 0 && (
+                    <p className="text-[0.6rem] text-accent/90 sm:text-[0.65rem]">
+                      Perfect for: {vehicle.tags.map((t) => t.replace(/-/g, " ")).join(", ")}
+                    </p>
+                  )}
                   <div className="flex items-center justify-between text-[0.65rem] text-textMuted sm:text-xs">
                     <div className="flex gap-2 sm:gap-4">
                       <span>{vehicle.seats} seats</span>
@@ -208,6 +220,51 @@ export default function TheRoosterPage() {
         </div>
       </SectionShell>
 
+      <SectionShell>
+        <div className="rounded-3xl border border-stone-200 bg-white/90 p-6 shadow-soft sm:p-8">
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-textMuted">
+            What&apos;s included
+          </p>
+          <h2 className="mt-2 text-lg font-semibold text-textPrimary sm:text-xl">
+            Every rental includes
+          </h2>
+          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              "Full insurance coverage",
+              "Unlimited kilometres",
+              "Delivery to The Rooster",
+              "24/7 support",
+            ].map((item) => (
+              <div key={item} className="flex items-center gap-3">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-amber-50 text-accent">
+                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                </span>
+                <span className="text-sm text-textPrimary">{item}</span>
+              </div>
+            ))}
+          </div>
+          <p className="mt-6 text-xs text-textMuted">
+            Keys collected at reception. Final confirmation and any tailored arrangements are handled
+            directly by Aggelos Rentals together with reception.
+          </p>
+          <p className="mt-2 text-[0.7rem] text-textMuted/80">
+            Aggelos Rentals · 15+ years on Antiparos · Trusted by The Rooster guests
+          </p>
+        </div>
+      </SectionShell>
+
+      <SectionShell>
+        <blockquote className="rounded-3xl border border-stone-200 bg-amber-50/50 p-6 text-center sm:p-8">
+          <p className="text-sm italic text-textPrimary sm:text-base">
+            &ldquo;The easiest way to explore Antiparos. Reception handled everything — we had our
+            car ready the next morning.&rdquo;
+          </p>
+          <footer className="mt-3 text-xs text-textMuted">— Guest, The Rooster Antiparos</footer>
+        </blockquote>
+      </SectionShell>
+
       {selectedVehicle && (
         <VehicleDetailSheet
           vehicle={selectedVehicle}
@@ -220,7 +277,7 @@ export default function TheRoosterPage() {
   );
 }
 
-function HeroSection({ onBrowse }: { onBrowse: () => void }) {
+function HeroSection({ onBrowse, onAskReception }: { onBrowse: () => void; onAskReception?: () => void }) {
   if (!partner) return null;
 
   return (
@@ -260,7 +317,11 @@ function HeroSection({ onBrowse }: { onBrowse: () => void }) {
               <LuxButton onClick={onBrowse} className="animate-fade-in-up opacity-0">
                 Browse vehicles
               </LuxButton>
-              <LuxButton variant="ghost" className="animate-fade-in-up opacity-0">
+              <LuxButton
+                variant="ghost"
+                className="animate-fade-in-up opacity-0"
+                onClick={onAskReception}
+              >
                 Ask reception to assist
               </LuxButton>
             </div>
@@ -435,7 +496,35 @@ function VehicleDetailSheet({
           Close
         </button>
 
+        {/* Success state */}
+        {status === "sent" && (
+          <div className="flex flex-1 flex-col items-center justify-center gap-6 p-8 text-center">
+            <div className="animate-success-check flex h-16 w-16 items-center justify-center rounded-full bg-amber-50">
+              <svg className="h-8 w-8 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold text-textPrimary">Your request is on its way</h3>
+              <p className="mt-2 text-sm text-textMuted">
+                Reception will confirm within a few hours. Show them your reference code if needed.
+              </p>
+            </div>
+            <p className="text-xs text-textMuted">
+              Reference: <span className="font-mono text-textPrimary">{referenceCode}</span>{" "}
+              <button
+                type="button"
+                onClick={copyReference}
+                className="text-accent underline transition-opacity hover:opacity-80"
+              >
+                {copied ? "Copied!" : "Copy"}
+              </button>
+            </p>
+          </div>
+        )}
+
         {/* Mobile: compact one-screen layout with details + form */}
+        {status !== "sent" && (
         <div className="flex flex-1 flex-col overflow-y-auto p-3 md:hidden">
           <div className="mb-2 pr-16">
             <Tag>{vehicle.category}</Tag>
@@ -467,6 +556,7 @@ function VehicleDetailSheet({
               <span> low / </span>
               <span className="font-semibold text-accent">{vehicle.pricing.highSeason} €</span>
               <span> high per day</span>
+              <p className="mt-1 text-[0.55rem]">Delivered to The Rooster. Keys at reception.</p>
             </div>
           </div>
           <div className="flex flex-1 flex-col gap-1.5 border-t border-stone-200 pt-2 text-[0.7rem] text-textMuted">
@@ -564,11 +654,7 @@ function VehicleDetailSheet({
                 disabled={disabled}
                 className="mt-1 w-full justify-center py-2 text-[0.7rem]"
               >
-                {status === "sending"
-                  ? "Sending…"
-                  : status === "sent"
-                  ? "Request sent – show to reception"
-                  : "Send request"}
+                {status === "sending" ? "Sending…" : "Send request"}
               </LuxButton>
               <p className="text-[0.6rem] text-textMuted/80">
                 Reference: <span className="font-mono text-textPrimary">{referenceCode}</span>{" "}
@@ -588,8 +674,10 @@ function VehicleDetailSheet({
             </form>
           </div>
         </div>
+        )}
 
         {/* Desktop: two-column layout */}
+        {status !== "sent" && (
         <div className="hidden flex-1 grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] gap-6 overflow-hidden p-5 md:grid md:p-7">
           <div className="flex flex-col gap-4 overflow-y-auto pr-1">
             <Tag>{vehicle.category}</Tag>
@@ -619,7 +707,7 @@ function VehicleDetailSheet({
 
             <div className="mt-4 rounded-2xl border border-stone-200 bg-stone-50 p-4 text-xs text-textMuted sm:text-sm">
               <p className="text-[0.7rem] uppercase tracking-[0.2em] text-textMuted">
-                Partner rates for {partnerName}
+                Exclusive partner rates for {partnerName}
               </p>
               <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
                 <p>
@@ -636,8 +724,8 @@ function VehicleDetailSheet({
                 </p>
               </div>
               <p className="mt-2 text-[0.7rem] text-textMuted/80">
-                Final confirmation, inclusions and any tailored arrangements are handled directly
-                by Aggelos Rentals together with reception.
+                Delivered to The Rooster. Keys at reception. Final confirmation and any tailored
+                arrangements are handled by Aggelos Rentals together with reception.
               </p>
             </div>
           </div>
@@ -744,11 +832,7 @@ function VehicleDetailSheet({
                   disabled={disabled}
                   className="w-full justify-center text-xs"
                 >
-                  {status === "sending"
-                    ? "Sending request…"
-                    : status === "sent"
-                    ? "Request sent – show this to reception"
-                    : "Send request details"}
+                  {status === "sending" ? "Sending request…" : "Send request details"}
                 </LuxButton>
                 <p className="text-[0.68rem] text-textMuted/70">
                   This does not immediately charge you. WhatsApp will open so you or reception can
@@ -775,6 +859,7 @@ function VehicleDetailSheet({
             </form>
           </div>
         </div>
+        )}
       </div>
     </div>
   );

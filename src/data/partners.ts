@@ -7,6 +7,8 @@ export interface PartnerConfig {
   subheadline: string;
   heroImage?: string;
   primaryMessage: string;
+  /** Pre-filled WhatsApp message when guest asks reception to assist */
+  receptionAssistMessage?: string;
   season: {
     lowSeasonLabel: string;
     highSeasonLabel: string;
@@ -28,6 +30,8 @@ export const partners: PartnerConfig[] = [
     subheadline: "A curated selection of vehicles and experiences for guests of The Rooster Antiparos.",
     primaryMessage:
       "Choose the vehicle that matches your stay — from refined SUVs to playful buggies and iconic scooters. All arranged seamlessly through reception.",
+    receptionAssistMessage:
+      "Hi, I'm a guest at The Rooster Antiparos and would like help choosing a rental. Could you assist?",
     season: {
       lowSeasonLabel: "Low Season (01/09 – 10/07)",
       highSeasonLabel: "High Season (11/07 – 31/08)"
