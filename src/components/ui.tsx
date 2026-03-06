@@ -30,9 +30,17 @@ export function LuxButton({
   );
 }
 
-export function Tag({ children }: { children: ReactNode }) {
+export function Tag({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
   return (
-    <span className="rounded-full border border-stone-200 bg-stone-100 px-3 py-1 text-xs uppercase tracking-[0.18em] text-textMuted">
+    <span
+      className={`rounded-full border border-stone-200 bg-stone-100 px-3 py-1 text-xs uppercase tracking-[0.18em] text-textMuted ${className ?? ""}`}
+    >
       {children}
     </span>
   );

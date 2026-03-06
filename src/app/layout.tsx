@@ -1,5 +1,12 @@
 import type { Metadata } from "next";
+import { Playfair_Display } from "next/font/google";
 import "./globals.css";
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-display",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Aggelos Partners Rentals",
@@ -16,8 +23,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="lux-gradient-bg min-h-screen">
+    <html lang="en" className={playfair.variable}>
+      <body className="lux-gradient-bg min-h-screen font-sans">
         {children}
       </body>
     </html>

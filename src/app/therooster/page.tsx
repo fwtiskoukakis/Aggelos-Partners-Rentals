@@ -39,9 +39,15 @@ function filterVehicles(
 }
 
 export default function TheRoosterPage() {
+  const [curtainVisible, setCurtainVisible] = useState(true);
   const [selectedType, setSelectedType] = useState<"all" | VehicleType>("all");
   const [transmission, setTransmission] = useState<TransmissionFilter>("any");
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
+
+  useEffect(() => {
+    const t = setTimeout(() => setCurtainVisible(false), 1800);
+    return () => clearTimeout(t);
+  }, []);
 
   const filtered = useMemo(
     () =>
@@ -62,6 +68,23 @@ export default function TheRoosterPage() {
 
   return (
     <main className="min-h-screen">
+      {/* Welcome curtain - fades out after 1.8s */}
+      <div
+        className={`fixed inset-0 z-50 flex flex-col items-center justify-center bg-stone-900 text-white transition-opacity duration-700 ${
+          curtainVisible ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
+        aria-hidden="true"
+      >
+        <p className="text-xs font-medium uppercase tracking-[0.3em] text-stone-400">
+          The Rooster Antiparos
+        </p>
+        <h2
+          className="mt-2 text-4xl font-light tracking-wide sm:text-5xl md:text-6xl"
+          style={{ fontFamily: "var(--font-display), ui-serif, Georgia, serif" }}
+        >
+          Your private fleet
+        </h2>
+      </div>
       <HeroSection
         onBrowse={() => {
           const el = document.getElementById("fleet-grid");
@@ -281,96 +304,121 @@ function HeroSection({ onBrowse, onAskReception }: { onBrowse: () => void; onAsk
   if (!partner) return null;
 
   return (
-    <div className="relative overflow-hidden border-b border-stone-200">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,_rgba(255,251,245,0.6),_transparent_70%)]" />
-      <SectionShell>
-        <div className="relative z-10 grid gap-10 md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] md:items-center">
-          <div className="space-y-6">
-            <span
-              className="animate-fade-in-up opacity-0"
-              style={{ animationDelay: "0ms", animationFillMode: "forwards" }}
-            >
-              <Tag>Exclusively for guests of {partner.name}</Tag>
-            </span>
-            <h1
-              className="animate-fade-in-up text-3xl font-semibold tracking-tight text-textPrimary opacity-0 sm:text-4xl md:text-5xl"
-              style={{ animationDelay: "80ms", animationFillMode: "forwards" }}
-            >
-              {partner.headline}
-            </h1>
-            <p
-              className="animate-fade-in-up max-w-xl text-sm text-textMuted opacity-0 sm:text-base"
-              style={{ animationDelay: "160ms", animationFillMode: "forwards" }}
-            >
-              {partner.subheadline}
-            </p>
-            <p
-              className="animate-fade-in-up max-w-xl text-xs text-textMuted/90 opacity-0 sm:text-sm"
-              style={{ animationDelay: "240ms", animationFillMode: "forwards" }}
-            >
-              {partner.primaryMessage}
-            </p>
-            <div
-              className="flex flex-wrap gap-3 pt-2"
-              style={{ animationDelay: "320ms", animationFillMode: "forwards" }}
-            >
-              <LuxButton onClick={onBrowse} className="animate-fade-in-up opacity-0">
-                Browse vehicles
-              </LuxButton>
-              <LuxButton
-                variant="ghost"
-                className="animate-fade-in-up opacity-0"
-                onClick={onAskReception}
-              >
-                Ask reception to assist
-              </LuxButton>
-            </div>
-            <div
-              className="animate-fade-in-up mt-4 flex flex-wrap gap-4 text-[0.7rem] text-textMuted/80 opacity-0 sm:text-xs"
-              style={{ animationDelay: "400ms", animationFillMode: "forwards" }}
-            >
-              <div className="flex items-center gap-2">
-                <span className="h-[1px] w-6 bg-accent/70" />
-                <span>{partner.season.lowSeasonLabel}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="h-[1px] w-6 bg-accent/70" />
-                <span>{partner.season.highSeasonLabel}</span>
-              </div>
-            </div>
-          </div>
+    <section className="relative flex min-h-screen flex-col justify-end overflow-hidden border-b border-stone-200">
+      {/* Full-bleed hero image with Ken Burns */}
+      <div className="absolute inset-0">
+        {partner.heroImage ? (
+          <Image
+            src={partner.heroImage}
+            alt=""
+            fill
+            priority
+            className="object-cover animate-ken-burns"
+            sizes="100vw"
+          />
+        ) : (
+          <div className="h-full w-full bg-gradient-to-br from-stone-200 to-stone-300" />
+        )}
+        {/* Gradient overlay for readability */}
+        <div
+          className="absolute inset-0 bg-gradient-to-t from-stone-900/95 via-stone-900/40 to-transparent"
+          aria-hidden
+        />
+      </div>
 
-          <div className="relative animate-fade-in-up opacity-0" style={{ animationDelay: "200ms", animationFillMode: "forwards" }}>
-            <div className="glass-surface relative aspect-[4/3] overflow-hidden rounded-[1.75rem]">
-              {partner.heroImage ? (
-                <Image
-                  src={partner.heroImage}
-                  alt={`Fleet for guests of ${partner.name}`}
-                  fill
-                  priority
-                  className="object-cover"
-                  sizes="(min-width: 1024px) 420px, 100vw"
-                />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center bg-stone-100">
-                  <div className="text-center">
-                    <p className="text-xs font-semibold uppercase tracking-[0.24em] text-textMuted">
-                      FLEET PREVIEW
-                    </p>
-                    <p className="mt-3 text-sm text-textMuted">
-                      Hero imagery for The Rooster and your flagship vehicles will appear here.
-                    </p>
-                  </div>
-                </div>
-              )}
+      {/* Content overlay */}
+      <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col justify-end px-4 pb-16 pt-24 sm:px-8 sm:pb-20 sm:pt-32">
+        <div className="max-w-2xl">
+          <span
+            className="animate-fade-in-up opacity-0"
+            style={{ animationDelay: "200ms", animationFillMode: "forwards" }}
+          >
+            <Tag className="border-white/20 bg-white/10 text-stone-200">
+              Exclusively for guests of {partner.name}
+            </Tag>
+          </span>
+          <h1
+            className="animate-fade-in-up mt-4 text-4xl font-light tracking-tight text-white opacity-0 sm:text-5xl md:text-6xl lg:text-7xl"
+            style={{
+              animationDelay: "280ms",
+              animationFillMode: "forwards",
+              fontFamily: "var(--font-display), ui-serif, Georgia, serif",
+            }}
+          >
+            {partner.headline}
+          </h1>
+          <p
+            className="animate-fade-in-up mt-4 max-w-xl text-base text-stone-300 opacity-0 sm:text-lg"
+            style={{ animationDelay: "360ms", animationFillMode: "forwards" }}
+          >
+            {partner.subheadline}
+          </p>
+          <p
+            className="animate-fade-in-up mt-2 max-w-xl text-sm text-stone-400 opacity-0"
+            style={{ animationDelay: "440ms", animationFillMode: "forwards" }}
+          >
+            {partner.primaryMessage}
+          </p>
+          <div
+            className="mt-6 flex flex-wrap gap-3"
+            style={{ animationDelay: "520ms", animationFillMode: "forwards" }}
+          >
+            <LuxButton onClick={onBrowse} className="animate-fade-in-up opacity-0">
+              Browse vehicles
+            </LuxButton>
+            <LuxButton
+              variant="ghost"
+              className="animate-fade-in-up border-white/20 bg-white/5 text-white opacity-0 hover:bg-white/15 hover:text-white"
+              onClick={onAskReception}
+            >
+              Ask reception to assist
+            </LuxButton>
+          </div>
+          <div
+            className="animate-fade-in-up mt-6 flex flex-wrap gap-6 text-[0.7rem] text-stone-500 opacity-0 sm:text-xs"
+            style={{ animationDelay: "600ms", animationFillMode: "forwards" }}
+          >
+            <div className="flex items-center gap-2">
+              <span className="h-[1px] w-6 bg-accent/70" />
+              <span>{partner.season.lowSeasonLabel}</span>
             </div>
-            <div className="absolute -bottom-6 right-5 rounded-2xl border border-stone-200 bg-white/95 px-4 py-3 text-[0.65rem] text-textMuted shadow-soft backdrop-blur-xl sm:text-xs">
-              <span>In partnership with Aggelos Rentals</span>
+            <div className="flex items-center gap-2">
+              <span className="h-[1px] w-6 bg-accent/70" />
+              <span>{partner.season.highSeasonLabel}</span>
             </div>
           </div>
         </div>
-      </SectionShell>
-    </div>
+
+        {/* Partnership badge */}
+        <div
+          className="animate-fade-in-up mt-8 inline-flex rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-[0.65rem] text-stone-400 backdrop-blur-sm opacity-0 sm:text-xs"
+          style={{ animationDelay: "680ms", animationFillMode: "forwards" }}
+        >
+          In partnership with Aggelos Rentals
+        </div>
+      </div>
+
+      {/* Scroll cue */}
+      <div
+        className="animate-scroll-cue absolute bottom-6 left-1/2 z-10 -translate-x-1/2 opacity-0"
+        aria-hidden
+      >
+        <div className="flex flex-col items-center gap-1">
+          <span className="text-[0.6rem] uppercase tracking-[0.2em] text-stone-500">
+            Scroll to explore
+          </span>
+          <svg
+            className="h-5 w-5 text-stone-500"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+          </svg>
+        </div>
+      </div>
+    </section>
   );
 }
 
